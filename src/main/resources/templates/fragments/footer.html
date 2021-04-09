@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    ...
+</head>
+<body>
+<div th:fragment="footer">
+    &copy; <span th:text="${#calendars.format(#calendars.createNow(), 'yyyy')}"></span> MoneyConverter</br>
+    Developer Болгов АЕ, Глушков ЯС
+</div>
+</body>
+</html>

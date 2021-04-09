@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title th:text="${pageTitle} + ' - MoneyConverter'">Template title</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous"><link th:href="@{/css/style.css}" rel="stylesheet">
+</head>
+<body>
+<div th:replace="fragments/header :: header">Header</div>
+<main class="container">
+    <a class="btn btn-sm btn-primary" href="#" th:href="@{/currency/add}">Добавить валюту</a>
+    <table class="table" th:if="${#lists.size(conversions)>0}">
+        <!--<thead>
+        <tr>
+            <th>Код</th>
+            <th>Название</th>
+            <th>Статус</th>
+            <th>Действия</th>
+        </tr>
+        </thead>
+        <tbody>
+        <th:block th:each="conversion : ${conversions}">
+            <tr>
+                <td th:text="${currencyFond.code}">...</td>
+                <td th:text="${currencyFond.name}">...</td>
+                <td>
+                    <span class="badge bg-success text-white" th:if="${currencyFond.status == true}">Вкл</span>
+                    <span class="badge bg-danger text-white" th:if="${currencyFond.status == false}">Выкл</span>
+                </td>
+                <td class="d-flex">
+                    <a href="#" th:href="'/currency/edit/'+${currencyFond.id}" class="btn btn-sm btn-primary">Редактировать</a>
+                    <form class="ml-2" th:action="'/currency/delete/'+${currencyFond.id}" method="post">
+                        <button class="btn btn-sm btn-danger" type="submit">Удалить</button>
+                    </form>
+                </td>
+            </tr>
+        </th:block>
+        </tbody>-->
+    </table>
+    <div th:if="${#lists.size(conversions) < 1}" class="alert alert-danger">Нет данных о валютах!</div>
+    <div th:replace="fragments/footer :: footer">Footer</div>
+</main>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-Piv4xVNRyMGpqkS2by6br4gNJ7DXjqk09RmUpJ8jgGtD7zP9yug3goQfGII0yAns" crossorigin="anonymous"></script>
+</body>
+</html>
