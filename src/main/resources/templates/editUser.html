@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title th:text="${pageTitle} + ' - MoneyConverter'">Template title</title>
+    <!-- Bootstrap CSS -->
+    <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
+    <link th:href="@{/css/style.css}" rel="stylesheet">
+</head>
+<body>
+<div th:replace="fragments/header :: header">Header</div>
+<main class="container">
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <form th:action="${'/users'}" method="post">
+                <h4 th:text="'Изменить роль для пользователя: ' + ${editUser.username}"></h4>
+                <div th:each="role : ${roles}">
+                    <div class="custom-control custom-checkbox">
+                        <input type="checkbox" th:name="${role}" th:checked="${editUser.roles.contains(role) ? true : false}" class="custom-control-input" th:id="${role}">
+                        <label class="custom-control-label" th:for="${role}" th:text="${role}"></label>
+                    </div>
+                </div>
+            <input type="hidden" th:value="${editUser.id}" name="userId">
+            <button class="btn btn-primary mt-2" type="submit">Сохранить</button>
+            </form>
+        </div>
+    </div>
+    <div th:replace="fragments/footer :: footer">Footer</div>
+</main>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+<script th:src="@{/js/bootstrap.min.js}" ></script>
+</body>
+</html>

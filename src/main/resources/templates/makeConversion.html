@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title th:text="${pageTitle} + ' - MoneyConverter'">Template title</title>
+    <!-- Bootstrap CSS -->
+    <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
+    <link th:href="@{/css/style.css}" rel="stylesheet">
+</head>
+<body>
+<div th:replace="fragments/header :: header">Header</div>
+<main class="container">
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <form class="form-signin" th:action="@{/conversion/make}" method="post">
+                <h1 class="h3 mb-3 font-weight-normal">Конвертация</h1>
+                <div th:if="${mes}" th:text="${mes}" class="alert alert-danger" role="alert"></div>
+                <div class="form-group">
+                    <label for="transferAmount">Сумма для конвертации, руб</label>
+                    <input type="text" class="form-control" id="transferAmount" name="transferAmount" placeholder="Сумма" autocomplete="off">
+                </div>
+                <div class="form-group">
+                    <label for="currencyFond">Валюта</label>
+                    <select id="currencyFond" class="form-control" name="currencyFond">
+                        <option value="">Выберите валюту</option>
+                        <option th:each="curr : ${currency}" th:attr="curValue=${curr.getCurrentCurrencyAmount()}" th:value="${curr.id}" th:text="${curr.name}"></option>
+                    </select>
+                </div>
+                <button class="btn btn-primary" type="submit">Конвертировать</button>
+            </form>
+        </div>
+        <div id="currentMoneyValue" class="col-lg-6 text-center"></div>
+    </div>
+    <div th:replace="fragments/footer :: footer">Footer</div>
+</main>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+<script th:src="@{/js/bootstrap.min.js}" ></script>
+<script type="text/javascript" th:src="@{/js/showCurrency.js}"></script>
+</body>
+</html>

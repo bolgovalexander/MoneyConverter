@@ -1,6 +1,9 @@
 package com.moneyconverter.MoneyConverter.entity;
 
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.util.Set;
 
 @Entity
@@ -10,18 +13,45 @@ public class User {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
+    @NotBlank(message = "Поле Имя не может быть пустым")
     private String name;
 
+    public Set<Conversion> getConversions() {
+        return conversions;
+    }
+
+    public void setConversions(Set<Conversion> conversions) {
+        this.conversions = conversions;
+    }
+
+    @NotBlank(message = "Поле Фамилия не может быть пустым")
     private String surName;
 
+    @NotBlank(message = "Поле Отчество не может быть пустым")
     private String secondName;
 
+    @NotBlank(message = "Поле Логин не может быть пустым")
     private String username;
 
+    @NotBlank(message = "Поле Пароль не может быть пустым")
     private String password;
+
+    public String getPassword2() {
+        return password2;
+    }
+
+    public void setPassword2(String password2) {
+        this.password2 = password2;
+    }
+
+    @Transient
+    @NotBlank(message = "Поле Подтверждение пароля не может быть пустым")
+    private String password2;
 
     private boolean active;
 
+    @Email(message = "Некорректный Email")
+    @NotBlank(message = "Поле Email не может быть пустым")
     private String email;
 
     @ElementCollection(targetClass = Role.class, fetch = FetchType.EAGER)
@@ -106,5 +136,20 @@ public class User {
         this.surName = surName;
         this.secondName = secondName;
         this.email = email;
+    }
+
+    public boolean isAdmin() {
+        return roles.contains(Role.ADMIN);
+    }
+
+    @OneToMany(mappedBy = "user",cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<Conversion> conversions;
+
+    public Set<Conversion> getConversion(){
+        return conversions;
+    }
+
+    public void setConversion(Set<Conversion> conversions) {
+        this.conversions = conversions;
     }
 }
