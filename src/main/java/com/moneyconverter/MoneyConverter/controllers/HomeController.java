@@ -3,6 +3,7 @@ package com.moneyconverter.MoneyConverter.controllers;
 import com.moneyconverter.MoneyConverter.entity.Role;
 import com.moneyconverter.MoneyConverter.entity.User;
 import com.moneyconverter.MoneyConverter.repos.UserRepository;
+import com.moneyconverter.MoneyConverter.service.CurrencyAPI;
 import org.json.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
@@ -31,36 +32,15 @@ public class HomeController {
 
     @GetMapping("/")
     public String home(Model model) {
-        final RestTemplate restTemplate = new RestTemplate();
         String[] currencyNameArray = new String[]{"USD", "EUR", "GBP"};
         Map<String, String> map = new HashMap<String, String>();
 
         for (int i = 0; i < currencyNameArray.length; i++) {
-            String response = restTemplate.getForObject("https://api.ratesapi.io/api/latest?base=" + currencyNameArray[i] + "&symbols=RUB", String.class);
-            //String response = restTemplate.getForObject("https://api.exchangeratesapi.io/latest?base=" + currencyNameArray[i] + "&symbols=RUB", String.class);
-            JSONObject currencyJsonObj = null;
-            try {
-                currencyJsonObj = new JSONObject(response);
-                map.put(currencyNameArray[i], currencyJsonObj.getJSONObject("rates").getString("RUB"));
-
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
+            map.put(currencyNameArray[i], Double.toString(CurrencyAPI.getCurrency(currencyNameArray[i])));
         }
-        double USD = 0.0;
-        double EUR = 0.0;
-        double GBP = 0.0;
-        try {
-            USD = Math.round((Double.parseDouble(map.get("USD"))) * 100) / 100.0;
-            EUR = Math.round((Double.parseDouble(map.get("EUR"))) * 100) / 100.0;
-            GBP = Math.round((Double.parseDouble(map.get("GBP"))) * 100) / 100.0;
-        } catch (Exception ex) {
-
-        }
-
-        model.addAttribute("USD", USD);
-        model.addAttribute("EUR", EUR);
-        model.addAttribute("GBP", GBP);
+        model.addAttribute("USD", Double.parseDouble(map.get("USD")));
+        model.addAttribute("EUR", Double.parseDouble(map.get("EUR")));
+        model.addAttribute("GBP", Double.parseDouble(map.get("GBP")));
         model.addAttribute("pageTitle", "Главная страница");
         return "index";
     }
@@ -89,6 +69,6 @@ public class HomeController {
         userRepository.save(user);
         return "redirect:/login";
 
-        }
     }
+}
 

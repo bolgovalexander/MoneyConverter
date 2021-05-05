@@ -6,6 +6,7 @@ import com.moneyconverter.MoneyConverter.entity.User;
 import com.moneyconverter.MoneyConverter.repos.ConversionRepository;
 import com.moneyconverter.MoneyConverter.repos.UserRepository;
 import com.moneyconverter.MoneyConverter.repos.CurrencyFondRepository;
+import com.moneyconverter.MoneyConverter.service.CurrencyAPI;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.stereotype.Controller;
@@ -24,7 +25,6 @@ public class ConversionController {
     private final ConversionRepository conversionRepository;
     private final UserRepository userRepository;
     private final CurrencyFondRepository currencyFondRepository;
-    final RestTemplate restTemplate = new RestTemplate();
 
     public ConversionController(ConversionRepository conversionRepository, UserRepository userRepository, CurrencyFondRepository currencyFondRepository) {
         this.conversionRepository = conversionRepository;
@@ -41,7 +41,7 @@ public class ConversionController {
             s.setCulcCurr((double) i / 100.0);
         }
         List<Conversion> sortedList = new ArrayList<>(conversionSet);
-        sortedList.sort((o1, o2) -> o1.getDateConversion().compareTo(o2.getDateConversion()));
+        sortedList.sort(Comparator.comparing(Conversion::getDateConversion));
         Collections.reverse(sortedList);
         model.put("conversions", sortedList);
         model.put("pageTitle", "Переводы");
@@ -74,16 +74,7 @@ public class ConversionController {
         User user = userRepository.findByUsername(request.getUserPrincipal().getName());
         Date date = new Date();
         CurrencyFond currency = currencyFondRepository.findById(currencyFond).orElseThrow();
-        String response = restTemplate.getForObject("https://api.ratesapi.io/api/latest?base=" + currency.getCode() + "&symbols=RUB", String.class);
-        JSONObject currencyJsonObj = null;
-        try {
-            currencyJsonObj = new JSONObject(response);
-            int i = (int) Math.round(Double.parseDouble(currencyJsonObj.getJSONObject("rates").getString("RUB")) * 100);
-            currency.setCurrentCurrencyAmount((double) i / 100.0);
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        currency.setCurrentCurrencyAmount(CurrencyAPI.getCurrency(currency.getCode()));
         Conversion conversion = new Conversion();
         conversion.setConversion(user, currency, date, currency.getCurrentCurrencyAmount(), Double.parseDouble(transferAmount));
         conversionRepository.save(conversion);
@@ -120,15 +111,7 @@ public class ConversionController {
         if (currency != null) {
             currency.forEach(c -> {
                 if (c.getStatus() == true) {
-                    String response = restTemplate.getForObject("https://api.ratesapi.io/api/latest?base=" + c.getCode() + "&symbols=RUB", String.class);
-                    JSONObject currencyJsonObj = null;
-                    try {
-                        currencyJsonObj = new JSONObject(response);
-                        c.setCurrentCurrencyAmount(Double.parseDouble(currencyJsonObj.getJSONObject("rates").getString("RUB")));
-
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
+                    c.setCurrentCurrencyAmount(CurrencyAPI.getCurrency(c.getCode()));
                     currencyInBank.add(c);
                 }
             });
